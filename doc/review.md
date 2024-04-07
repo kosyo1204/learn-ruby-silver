@@ -1,5 +1,3 @@
-学んだこと
-
 # Objectクラス
 equal?
   同一オブジェクトであればtrue、オブジェクトIDが異なる場合はfalseを返す。
@@ -7,11 +5,24 @@ eql? ==
   オブジェクトIDはチェックしない
 
 # Integerクラス
+プレフィックス
+  0b: 2進数
+  0 or 0o: 8進数
+  0d or 指定なし: 10進数
+  0x: 16進数
 upto
   引数を1ずつ増やした数を順番に配列として返す。
 
+# Numericクラス
+step(limit, step)
+  stepずつ加算、limitまで。
 
 # Stringクラス
+oct
+  文字列を8進数で解釈し、整数で返す。
+  8進数で解釈できない場合は0で返す。
+hex
+  文字列を16進数で解釈。解釈できないときはoct同様、0で返す。
 strip, strip!
   文字列の先頭と末尾の空白文字を取り除く。
 chomp
@@ -25,13 +36,15 @@ scan
   引数で指定したパターンにマッチした部分を配列で返す。複数あれば全てを。
 delete delete!
   引数に指定した文字を削除
-concat
+concat <<
   レシーバと引数を結合。破壊的
+  Arrayにconcatはある。
 index
   一つ目の文字を二つ目の引数位置から探し、最初に見つけた位置を返す。
 
-
 # Arrayクラス
+each_cons(cnt)
+  cntずつブロックに渡す。1つずつ進む。
 shift
   先頭の要素を破壊的に取り出す。引数があればその数だけ取り出し、配列で返す。
   なければnilを返す。
@@ -39,12 +52,15 @@ unshift prepend
   先頭に値を破壊的に追加する。引数がなければ何もしない。
 pop
   末尾から要素を取り除いて返す。引数があればその数だけ取り出し、配列で返す。
-push
+push append
   末尾に追加する。引数がなければ何もしない。
 compact compact!
   nilを取り除くメソッド。
 flatten flatten!
   再帰的に平坦化する。平坦化が行わなければnilを返す。
+zip
+  レシーバと引数の要素からなる配列を生成して返す。productの弱体化
+  https://docs.ruby-lang.org/ja/latest/method/Array/i/zip.html
 product
   レシーバの配列と引数の配列から一つずつ要素を取り出し、新しい配列を作成する。
   レシーバの要素を起点とする。
@@ -61,7 +77,8 @@ delete_if reject!
   delete_ifは常にselfを返す。reject!は削除しなければnilを返す。
 upcase upcase!
   大文字
-
+sort sort!
+  並べ替え。<=>で実施。比較できなければArgumentError
 
 # Hashクラス
 to_a
@@ -78,6 +95,8 @@ clear
   ハッシュの中身を空にする。破壊的メソッド。
 
 # Enumerableクラス
+each_with_index{|n, i| puts n}
+  2つ目にindex
 collect map
   ブロックの結果をまとめた配列を返す。
 select filter select! fileter! find_all
@@ -86,7 +105,34 @@ find
   ブロックの条件に一致する最初の要素を返す。
 
 # IOクラス
-.read 第1引数で読み込むファイル、2で文字数、3で開始位置。
+read 第1引数で読み込むファイル、2で文字数、3で開始位置。
+
+# Dateクラス
+strftime 引数は一つだけ。
+https://docs.ruby-lang.org/ja/latest/method/Time/i/strftime.html
+  %F %Y-%m-%d 2024-04-14 Date.today.to_s
+  %m month
+  %M Minute
+  %d date
+  %D datetime %m/%d/%y
+  %y 下２桁
+  %Y 4桁
+  %x %x: 日付 (%Dと同等)
+
+# 例外エラー
+raise
+  第1引数: 発生させる例外クラス。インスタンスも指定できる。
+  第2引数: メッセージ。
+
+  引数を省略した場合はRuntimeErrorが発生。
+
+rescue
+  例外クラスを指定しない場合
+    StandardErrorとそのサブクラスを補足する。
+  =>で例外オブジェクトを参照できる。
+
+  StandardErrorを継承しないクラスのインスタンスをraiseメソッドの引数に指定
+    TypeErrorが発生し、「exception class/object expected」と表示。
 
 # 演算子の優先度
 論理演算子は低い。算術演算子は高い。
@@ -105,26 +151,19 @@ bar 5, 6, 7, 8
 
 なお、関数を呼び出すときの引数に()は不要。
 
-# Dateクラス
-strftime 引数は一つだけ。
-  %F %Y-%m-%d 2024-04-14 Date.today.to_s
-  %m month
-  %M Minute
-  %d date
-  %D datetime %m/%d/%y
-  %y 下２桁
-  %Y 4桁
+# 変数定義
+多重代入にて左辺と右辺の数が異なる場合
+左辺が多い場合: 
+  左から代入される。多い分はnilが代入される。
+右辺が多い場合: 
+  左から代入する。多い場合は無視される。
 
-# 進数
-16進数は0xから始まる。0~Fで表現。それ以外は例外エラー
-8進数は0から始まり0~7
+
 
 
 seek
-
 File
 chmod モード変更
 dirname ディレクトリの名前を返す。
 delete ファイル削除
-
 rescueに例外クラスの指定がなければStandardErrorのサブクラスを全て補足する。
