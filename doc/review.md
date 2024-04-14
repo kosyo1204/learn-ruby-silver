@@ -41,6 +41,15 @@ concat <<
   Arrayにconcatはある。
 index
   一つ目の文字を二つ目の引数位置から探し、最初に見つけた位置を返す。
+split
+  指定した文字で区切る。()を含んで指定すると、区切る文字も含めて返す。
+  "Spring,Summer,Autumn,Winter".split(/(,)/)
+  → ["Spring", ",", "Summer", ",", "Autumn", ",", "Winter"]とカンマを含めて分解されます。
+%
+  フォーマットされた文字列を返す。指示子が引数の値で置換される。
+  %dは10進数で数値を出力する。
+  https://docs.ruby-lang.org/ja/latest/method/String/i/=25.html
+  例 'hello%d' % 5 -> 5を数値として受け取る。%dは数値として指定。
 
 # Arrayクラス
 each_cons(cnt)
@@ -70,8 +79,9 @@ transpose
 partition
   ブロックの要素を満たす部分、満たさない部分に分割し、
   真の配列と偽の配列を二つに分けて返す。
-delete
+delete 破壊的メソッド。
   引数で指定した値を等しい要素を全て削除する。削除した場合は削除した要素を、そうでなければnilを返す。
+  stirngは非破壊、arrayとhashは破壊的。
 delete_if reject!
   ブロックを渡し、真の要素を全て削除する。
   delete_ifは常にselfを返す。reject!は削除しなければnilを返す。
@@ -93,6 +103,15 @@ update
   指定した内容へ更新
 clear
   ハッシュの中身を空にする。破壊的メソッド。
+delete 破壊的メソッド
+
+store
+  []=と同じ。
+  https://docs.ruby-lang.org/ja/latest/method/Hash/i/=5b=5d=3d.html
+
+ハッシュのキーにオブジェクトを指定できる。
+通常、シンボルと文字列を指定する。
+キーを:klassとすると、シンボルで登録されてしまう。
 
 # Enumerableクラス
 each_with_index{|n, i| puts n}
@@ -103,9 +122,6 @@ select filter select! fileter! find_all
   該当する全ての要素を配列にして返す。真がなければ空配列を返す。
 find
   ブロックの条件に一致する最初の要素を返す。
-
-# IOクラス
-read 第1引数で読み込むファイル、2で文字数、3で開始位置。
 
 # Dateクラス
 strftime 引数は一つだけ。
@@ -119,7 +135,43 @@ https://docs.ruby-lang.org/ja/latest/method/Time/i/strftime.html
   %Y 4桁
   %x %x: 日付 (%Dと同等)
 
-# 例外エラー
+
+# Fileクラス
+File.dirname 引数の文字列の/より前の文字列を返す。
+File.chmod 引数に指定したファイルのモードを示す。（権限）
+File.delete ファイルを削除。
+rewind
+  ファイルポインタを先頭に移動。a+モードだと意味なく、末尾に追記される。
+
+## モード
+r 読み込みモード
+r+ 読み書きモード。文の先頭から。
+w 書き込みモード。既存のファイルがあればファイルの中身を空にする。
+w+ 読み書きモード。既存はカラになる。
+a 追記モード。文末に追記。
+a+ 読み書きモード。読み込みは常に先頭。書き込みは常に末尾。
+
+ファイル作成  w, a
+ファイル追記  w, a wだとリセットされてから追記。
+
+
+# Dirクラス
+Dir.delete 空のディレクトリを削除。
+Dir.rmdir 同上
+
+# IOクラス
+read
+  第1引数で読み込むファイル、2で文字数、3で開始位置
+eof?
+  ファイルポインタが終端ならtrue
+readlines
+  全てを読み込む
+seek(終端, whence)
+  whenceからoffsetまで移動。
+  IO::SEEK_CUR 現在のファイルポインタから。
+
+
+# 例外エラークラス
 raise
   第1引数: 発生させる例外クラス。インスタンスも指定できる。
   第2引数: メッセージ。
@@ -152,18 +204,30 @@ bar 5, 6, 7, 8
 なお、関数を呼び出すときの引数に()は不要。
 
 # 変数定義
+ローカル変数は1文字以上。
+
 多重代入にて左辺と右辺の数が異なる場合
 左辺が多い場合: 
   左から代入される。多い分はnilが代入される。
 右辺が多い場合: 
   左から代入する。多い場合は無視される。
 
+定数は上書きするとき、警告が生じる。
+
+# %記法 https://docs.ruby-lang.org/ja/latest/doc/spec=2fliteral.html#percent
+%(a b) -> 'a b'
+  文字列にする
+%!(a) -> "a" , %q(b) -> "b"
+  ダブルクォーと文字列。
+%W(a b) -> ['a', 'b']
+  文字列の配列にする。大文字ならバックスラッシュ、式展開が有効
+%s(a) -> :a
+  シンボルにする。
+  %s(a b) -> :"a b"
+  {%s(a b) => 1} => {:"a b"=>1}
+%i(a b) -> [:a, :b]
+  シンボルの配列。大文字ならバックスラッシュ、式展開が有効
 
 
 
-seek
-File
-chmod モード変更
-dirname ディレクトリの名前を返す。
-delete ファイル削除
 rescueに例外クラスの指定がなければStandardErrorのサブクラスを全て補足する。
